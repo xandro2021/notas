@@ -1,0 +1,28 @@
+#+title: Notas Php
+
+
+* Iniciar servidor de desarrollo
+#+begin_src bash
+php -S localhost:3000
+#+end_src
+
+* Imprimir Consola
+#+begin_src php
+print "texto";
+echo "texto";
+var_dump("variable");
+#+end_src
+
+* Incluir archivos
+** Include
+Estoy agregando el archivo de header y footer al archivo de php actual
+#+begin_src php
+<?php include "includes/header.php";
+echo "Mi codigo de archivo actual"
+include "includes/footer.php";
+#+end_src
+
+* Variables
+#+begin_src php
+$saludo = "hola";
+#+end_src

@@ -1,0 +1,202 @@
+#+title: notasSQL
+
+* Crear Base de datos
++ create database nombredb;
+
+* Mostrar todas las bases de datos
++ show databases;
+
+* Seleccionar una base de datos
++ use nombredb;
+
+* Crear tabla
+** Normal
+#+begin_src sql
+create table servicios (
+     id INT(11) NOT NULL AUTO_INCREMENT,
+     nombre VARCHAR(60) NOT NULL,
+     precio DECIMAL(6,2) NOT NULL,
+     PRIMARY KEY (id)
+);
+#+end_src
+** Con FK
+#+begin_src sql
+create table citas (
+    id int(11) not null auto_increment,
+    fecha date not null,
+    hora time not null,
+    clienteId int(11) not null,
+    primary key(id),
+    key clienteId (clienteId),
+    constraint cliente_FK
+    foreign key (clienteId)
+    references clientes (id)
+);
+#+end_src
+* Mostar tablas
++ show tables;
+
+* Mostar tabla en especifico
++ describe nombretabla;
+
+* Insertar datos en tabla
+** Un registro
+#+begin_src sql
+insert into servicios (nombre, precio) values ("Corte de Cabello de Adulto", 80);
+insert into citas (fecha, hora, clienteId) values ("2021-06-28", "10:30:00", 1);
+#+end_src
+** Multiples registros
+#+begin_src sql
+insert into servicios (nombre, precio) values
+     ("Peinado Mujer", 80),
+     ("Peinado Hombre", 60);
+#+end_src
+
+* Leer datos
+** Todos los datos de una tabla
+#+begin_src sql
+select * from servicios;
+#+end_src
+** Traer todos los datos de un solo atributo de una tabla
+#+begin_src sql
+select nombre from servicios;
+#+end_src
+** Traer varios atributos en especificos de una tabla
+#+begin_src sql
+select nombre, precio from servicios;
+#+end_src
+** Ordenar los datos de una consulta por un atributo
+*** Default (asc)
+#+begin_src sql
+select id, nombre, precio from servicios order by precio;
+#+end_src
+*** Ascendente
+#+begin_src sql
+select id, nombre, precio from servicios order by precio asc;
+#+end_src
+*** Descendente
+#+begin_src sql
+select id, nombre, precio from servicios order by precio desc;
+#+end_src
+** Limitar numero de registros en la consulta
+#+begin_src sql
+select id, nombre, precio from servicios limit 2;
+select id, nombre, precio from servicios order by id desc limit 2;
+#+end_src
+** Leer un registro en especifico
+#+begin_src sql
+select id, nombre, precio from servicios where id = 3;
+#+end_src
+** Leer registros con condicion < >
+#+begin_src sql
+select * from servicios where precio >= 80;
+#+end_src
+** Leer registros dentro de un rango de precios
+#+begin_src sql
+select * from servicios where precio between 100 and 200;
+#+end_src
+** Funciones agregadoras
+*** Mostrar una tabla con las fechas y el numero reservaciones que tienen en su respectiva fecha
+#+begin_src sql
+select count(id), fecha
+       from reservaciones
+        group by fecha
+        order by count(id) desc;
+#+end_src
+*** Calcular el total de servicios (SUM)
+Suma todos los campos de una columna de la tabla
+#+begin_src sql
+select sum(precio) as totalServicios from servicios;
+#+end_src
+*** Calcular el valor minimo o Valor Maximo (MIN/MAX)
+#+begin_src sql
+select min(precio) as precioMenor from servicios;
+select max(precio) as precioMenor from servicios;
+#+end_src
+** Busquedas
+*** Busquedas de registros que inicien con una palabra
+Devuelve todos los registros donde el nombre inicie con la palabra corte
+#+begin_src sql
+select * from servicios where nombre like 'Corte%';
+#+end_src
+*** Busquedas que finalicen con una palabra
+#+begin_src sql
+select * from servicios where nombre like '%Corte';
+#+end_src
+*** Contiene a la palabra en cualquier lugar
+#+begin_src sql
+select * from servicios where nombre like '%Cabello%';
+#+end_src
+** Concat
+*** Concatener varios atributos en una columna
+Para concatenar los datos de varias columnas en una sola
+#+begin_src sql
+select concat(nombre, " ", apellido) as nombreCompleto from reservaciones;
+#+end_src
+*** Busqueda avanzada en combinacion con LIKE
+Mostrar una nueva celda que contenga el nombre y el apellido de las personas que se llaman Ana
+#+begin_src sql
+select * from reservaciones where concat(nombre, " ", apellido) like "%Ana Preciado%";
+select hora, fecha, concat(nombre, " ", apellido) as "Nombre Completo" from reservaciones where concat(nombre, " ", apellido) like "%Ana Preciado%";
+#+end_src
+** IN
+Se usa para poder recuperar mas de un registro, por ejemplo el que tiene el id 1 y 3.
+#+begin_src sql
+select * from reservaciones where id in (1,3);
+#+end_src
+** Mas de una condicion (AND)
+Sirve para agregar mas de una condicion a la consulta
+#+begin_src sql
+select * from reservaciones where fecha = "2021-06-28" and id = 1;
+#+end_src
+** Datos de mas de una tabla
+#+begin_src sql
+select * from citas inner join clientes on clientes.id = citas.clienteId;
+select * from citasServicios
+       left join citas on citas.id = citasServicios.citaId
+       left join servicios on servicios.id = citasServicios.servicioId;
+
+select * from citasServicios
+       left join citas on citas.id = citasServicios.citaId
+       left join clientes on clientes.id = citas.clienteId
+       left join servicios on servicios.id = citasServicios.servicioId;
+#+end_src
+* Actualizar datos
+** Actualizar un registro en especifico
+*** Un solo campo
+#+begin_src sql
+update servicios set precio = 70 where id = 2;
+update servicios set nombre = "duplicado" where id = 2;
+#+end_src
+*** Varios campos
+#+begin_src sql
+update servicios set nombre = "Corte de cabello duplicado actualizado", precio = 120 where id = 2;
+#+end_src
+
+* Eliminar datos
+** Eliminar un registro
+Al eliminar un registro, si el id es autoincremental, ese id del registro eliminado ya no volverá a ser tomado por ningún otro registro que se ingrese
+#+begin_src sql
+delete from servicios where id = 2;
+#+end_src
+
+* Modificar la base de datos
+** Modificar tabla (schema)
+*** Agregar nueva Columna - Atributo
+Agrega una nueva columna a la tabla (atributo), aunque sus valores estaran vacíos para todos los registros que ya existían en la tabla;
+#+begin_src sql
+alter table servicios add descripcion varchar(100) not null;
+#+end_src
+*** Cambiar Columna - Atributo existente
+#+begin_src sql
+alter table servicios change descripcion nuevonombre varchar(100) not null;
+#+end_src
+*** Eliminar Columna existente
+#+begin_src sql
+alter table servicios drop column descripcion;
+#+end_src
+
+* Eliminar tabla
+#+begin_src sql
+drop table servicios;
+#+end_src

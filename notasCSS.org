@@ -1,0 +1,454 @@
+#+title: Notas de CSS del curso
+
+* Icono
+** Tabler Icons
+** Hero Icons
+** Font Awesome
+
+* Cargar rapida de CSS
+#+begin_src css
+<link rel="preload" href="css/styles.css" as="style"/>
+<link rel="stylesheet" href="css/styles.css" type="text/css" media="screen" />
+#+end_src
+
+* Hack REM
+1 rem -> 10px
+#+begin_src css
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-size: 16px;
+}
+#+end_src
+
+* Displays
+** Block
++ Se coloca cada elemento uno debajo del otro
+** Inline
++ Lo elementos se colocan uno al lado del otro
+** Flex
+*** flex-direction
+**** row
+**** column
+**** row-reverse
+**** column-reverse
+*** align-items
+**** row
+Alinea el elemento de manera vertical
+**** column
+Alinea el elemento de manera horizontal
+*** justify-content
+**** row
+Alinea el elemento de manera horizontal
+**** column
+Alinea el elemento de manera vertical
+* Padding vs Margin
+** Margin
++ Separacion exterior del elemento, hace que este se distancie de otros elementos
+** Padding
++ Separacion interior del elemento, hace que este se agrande
+* Pseudo elemento
+Elementos creados desde el css que no existen en el html
+#+begin_src css
+.titulo::after {
+    content: 'Esto va deespues del titulo';
+}
+#+end_src
+* Hero con Mascara
+** Opcion 01: Coordenadas
+#+begin_src css
+.hero {
+    background-image: url(../img/hero.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 45rem;
+    padding: 2rem;
+    position: relative;
+}
+
+.contenido-hero {
+    position: absolute;
+    background-color: red;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+#+end_src
+** Opcion 02: Width & Height 100%
+#+begin_src css
+.hero {
+    background-image: url(../img/hero.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 45rem;
+    position: relative;
+}
+
+.contenido-hero {
+    position: absolute;
+    background-color: red;
+    width: 100%;
+    height: 100%;
+}
+#+end_src
+* Color con transparencia
+** Anterior RGBA
+#+begin_src css
+background-color: rgba(0, 0, 0, .7);
+#+end_src
+** Nuevo RGB
+#+begin_src css
+background-color: rgb(0 0 0 /70%);
+#+end_src
+* Herramienta de Degradado
+** CSS Matic
+https://html-css-js.com/css/generator/box-shadow/
+* Centrar elemento
+** Display Flex
++ Se usa justify-content o align items dependiendo de donde se quiera centrar y el eje
+** Margin 0 Auto
+Centra el elemento en forma horizontal, util para display: block
+#+begin_src css
+elemento {
+    margin: 0 auto;
+}
+#+end_src
+* nth-child(n)
+Propiedad usada para especificar un elemento especifico de un grupo de elementos con la misma propiedad
++ Al tercero y cuarto campo se les asigna la propiedad grid-column: 1 / 3
+#+begin_src css
+.campo:nth-child(3),
+.campo:nth-child(4) {
+    grid-column: 1 / 3;
+}
+#+end_src
+* Efecto scroll por secciones
+El scroll te ubica automaticamente en las secciones especificadas
+En este ejemplo serian servicios, navegacion-principal y el formulario
+#+begin_src css
+html {
+    font-size: 62.5%;
+    box-sizing: border-box; /* Hack box model rem-px */
+    scroll-snap-type: y mandatory; /* Se hace efecto scroll en el eje vertical */
+}
+
+/* Propiedades requeridas para el efecto de scroll de navegacion */
+/* SCROLL SNAP */
+.servicios,
+.formulario,
+.navegacion-principal {
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+}
+#+end_src
+* :last-of-type
+Para seleccionar el ultimo elemento de un conjunto de elementos del mismo tipo
++ Dar un margen derecho a todos los enlaces menos al ultimo
+#+begin_src css
+.navegacion__enlace {
+    margin-right: 2rem;
+}
+
+.navegacion__enlace:last-of-type {
+    margin-right: 0;
+}
+#+end_src
+* Dos columnas con FLEX
++ dos-columnas es el padre
++ .entrada-blog es uno de los hijos
++ flex contiene al factor de crecimiento, decrecimiento, y el tamaño base (flex-basis)
++ Se le resta 1rem para hacer la separacion
+#+begin_src css
+@media (min-width: 768px) {
+    .dos-columnas {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .entrada-blog {
+        flex: 0 0 calc(50% - 1rem);
+    }
+}
+#+end_src
+* Tres columnas diferentes
+** Grid
++ Se simplifica usando grid-template-areas
+#+begin_src css
+@media (min-width: 768px) {
+    .contenedor-grid {
+        display: grid;
+        grid-template-areas: "izquierda centro derecha";
+        grid-template-columns: 1fr 3fr 1fr;
+        grid-auto-flow: column;
+        column-gap: 2rem;
+    }
+
+    .contenido-principal {
+        grid-area: centro;
+    }
+
+    .sidebar-1 {
+        grid-area: izquierda;
+    }
+}
+#+end_src
+** Flex
++ El basis les asigna el tamanio menos 1 rem de separacion
++ El order -1 posiciona ese elemento de primero
+#+begin_src css
+@media (min-width: 768px) {
+    .contenedor-flex {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .contenido-principal {
+        flex-basis: calc(60% - 1rem);
+    }
+
+    .sidebar {
+        flex-basis: calc(20% - 1rem);
+    }
+
+    .sidebar {
+        order: -1;
+    }
+}
+#+end_src
+* Column Drop
+** Flex
+#+begin_src css
+@media (min-width: 480px) {
+    .column-drop-flex {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .contenido-principal,
+    .primera {
+        flex-basis: calc(50% - 1rem);
+    }
+}
+
+@media (min-width: 768px) {
+    .contenido-principal,
+    .primera,
+    .segunda {
+        flex: 0 0 calc(33.3% - 2rem);
+    }
+}
+
+#+end_src
+* Sidebar
+** Flex
+Si se usa flex: 0 0 calc(50% - 1rem) entonces si se necesitaria spacebetween
+#+begin_src css
+@media (min-width: 768px) {
+    .con-sidebar {
+        display: flex;
+        gap: 2rem;
+    }
+
+    aside {
+        flex: 1;
+    }
+
+    article {
+        flex: 3;
+    }
+}
+#+end_src
+** Grid
+#+begin_src css
+@media (min-width: 768px) {
+    .con-sidebar {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        column-gap: 4rem;
+        grid-auto-flow: column;
+    }
+
+    aside {
+        grid-column: 2 / 3;
+    }
+}
+#+end_src
+* Layout-shifter
+** Grid
+#+begin_src css
+@media (min-width: 768px) {
+    .layout-shifter {
+        display: grid;
+        grid-template-areas: "contenido"
+                             "inferior";
+    }
+
+    .sidebar {
+        grid-area: inferior;
+    }
+
+    .contenido-principal {
+        grid-area: contenido;
+        display: grid;
+        grid-template-areas: "entrada1 entrada2";
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 3rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .layout-shifter {
+        grid-template-areas: "contenido sidebar";
+        column-gap: 2rem;
+    }
+
+    .sidebar {
+        grid-area: sidebar;
+    }
+
+    .contenido-principal {
+        grid-area: contenido;
+        grid-template-areas: "entrada1"
+                             "entrada2";
+        grid-template-columns: unset;
+    }
+}
+#+end_src
+** Flexbox
+#+begin_src css
+@media (min-width: 768px) {
+    .layout-shifter {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .contenido-principal {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .entrada-blog {
+        flex: 0 0 calc(50% - 2rem);
+    }
+}
+
+@media (min-width: 992px) {
+    .layout-shifter {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .contenido-principal {
+        flex: 0 0 calc(66.6% - 2rem);
+        flex-wrap:  wrap;
+    }
+
+    .sidebar {
+        flex: 0 0 calc(33.3% - 2rem);
+        order: 2;
+    }
+
+    .entrada-blog {
+        flex: 0 0 100%;
+    }
+}
+#+end_src
+* Unset
+Usado para cuando se quiera anular la propiedad de grid-column o grid-row
+#+begin_src css
+.primera {
+   grid-column: 1 / 3;
+   grid-column: unset;
+}
+#+end_src
+* Consejos de optimizacion
+** Imagenes
+*** LazyLoading
+Descarga la imagen según la vamos requeriendo
+#+begin_src html
+<img width="300" height="200" loading="lazy" src="img/blog1.jpg" alt="imagen del blog" />
+#+end_src
+*** Cargar formatos ligeros HTML
+#+begin_src html
+<picture>
+    <source loading="lazy" srcset="img/blog3.avif" type="image/avif" />
+    <source loading="lazy" srcset="img/blog3.webp" type="image/webp" />
+    <img loading="lazy" src="img/blog3.jpg" alt="imagen del blog" />
+</picture>
+#+end_src
+*** Cargar formatos ligeros en CSS
++ Se usa la libreria Modernizr
+  https://modernizr.com/download?webp-setclasses&q=webp
++ Instrucciones
+  https://www.udemy.com/course/desarrollo-web-completo-con-html5-css3-js-php-y-mysql/learn/lecture/24107662#overview
++ Modificar archivo css para agregar las clases que se ven en el document *.html
+  #+begin_src css
+.webp .header {
+    background-image: url(../img/banner.webp);
+}
+
+.no-webp .header {
+    background-image: url(../img/banner.jpg);
+}
+
+.header {
+    height: 60rem;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+  #+end_src
+** Video
++ Si se deja el autplay, entonces no es necesario usar el preload, dado que esa opcion de auto es el default.
++ Si el video no forma parte del diseño y se prefiere que el usuario interactue con el video para empezar a cargarlo, entonces  seria preferible quitar el autoplay y cambiar el valor de preload = "auto" de acuerdo a la documentacion.
+#+begin_src html
+<video autoplay muted loop preload="auto">
+    <source src="video/dj.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+    <source src="video/dj.ogv" type='video/ogg; codecs="theora, vorbis"'>
+    <source src="video/dj.webm" type='video/webm'>
+    Your browser does not support my HTML5 video player
+</video>
+#+end_src
+** Preload
+Elementos que se consideren que deben cargarse lo más pronto posible
+Es decir, cargar lo que requiera inmeditamente
+Se pueden cargar cualquier cosa como imagenes, videos, audio, styless, fonts
+*** Local
+#+begin_src html
+<link rel="preload" href="css/styles.css" as="style" />
+<link rel="stylesheet" href="css/styles.css" type="text/css" media="screen" />
+#+end_src
+*** De otro origen
+#+begin_src html
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" crossorigin="crossorigin" as="font" />
+<link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+#+end_src
+*** Ejemplo de carga de imagen
+#+begin_src html
+<link rel="preload" href="img/blog1.jpg" as="image" />
+#+end_src
+** Prefetch
+Se usa para cargar de antemano la siguiente página que se espera que el usuario visite
++ En el ejemplo se precarga la pagina de nosotros.html
+#+begin_src html
+<link rel="prefetch" href="nosotros.html" as="document" />
+#+end_src
+** Etiquetas Meta
+#+begin_src html
+<meta name="description" content="Página web de blog de café">
+#+end_src
+** Enlaces Decriptivos
+*** Penalizado por Google
+#+begin_src html
+<a class="boton boton--secundario" href="entrada.html">Más Información</a>
+#+end_src
+*** Preferido por Google
+#+begin_src html
+<a class="boton boton--secundario" href="entrada.html">Más Información sobre nuestros productos</a>
+#+end_src
