@@ -68,3 +68,71 @@ El resultado de var_dump va a ser -1 si el de la izquierda es menor, cero si son
 #+begin_src php
 var_dump($numero1 <=> $numero2);
 #+end_src
+
+* Incremento y decrementos
+Es igual a los de javascript
+
+* Funciones
+#+begin_src php
+$nombreCliente = "Marco";
+strlen($nombreCliente);
+trim($nombreCliente);
+strtoupper($nombreCliente);
+strtolower($nombreCliente);
+str_replace("Juan", "J", $nombreCliente);
+strpos($nombreCliente, "Juan");
+#+end_src
+
+* Concatenar
+String + Variable
+#+begin_src php
+$nombreCliente = "Ronaldo";
+$tipoCliente = "Premium";
+echo "El Cliente ".$nombreCliente." es ".$tipoCliente;
+echo "El Cliente {$nombreCliente} es {$tipoCliente}";
+#+end_src
+
+* Arreglos
+** Crear Arreglo
+#+begin_src php
+$carrito = ["Tablet", "Television", "Computadora"];
+$clientes = array("Cliente 1", "Cliente 2", "Cliente 3");
+#+end_src
+** Leer todos los elementos del arreglo
+#+begin_src php
+echo "<pre>";
+var_dump($carrito);
+echo "<pre>";
+#+end_src
+** Leer elemento del arreglo
+#+begin_src php
+var_dump($carrito[1]);
+#+end_src
+** Agregar/Actualizar elemento al arreglo con Indice
++ Como en JS si existe lo actualiza, sino lo agrega
+#+begin_src php
+$carrito[3] = "Nuevo Producto";
+#+end_src
+** Agregar elementos
+*** Al Final
+#+begin_src php
+array_push($carrito, "Audifonos");
+#+end_src
+*** Al Inicio
+#+begin_src php
+array_unshift($carrito, "Smart Watch");
+#+end_src
+
+* Arreglo Asociativo
+#+begin_src php
+$cliente = [
+    "nombre" => "Juan",
+    "saldo" => 200,
+    "informacion" => [
+        "tipo" => "premium"
+    ]
+];
+
+echo $cliente["nombre"];
+echo $cliente["informacion"]["tipo"];
+#+end_src
