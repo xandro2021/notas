@@ -26,3 +26,39 @@ include "includes/footer.php";
 #+begin_src php
 $saludo = "hola";
 #+end_src
+
+* Constantes
+#+begin_src php
+define("MICONSTANTE", "Este es el valor de la constante");
+const constantePI = 3.14;
+#+end_src
+
+* Tipos de datos
+** Boleanos
+#+begin_src php
+$logueado = true;
+var_dump($logueado);
+#+end_src
+** Enteros
+#+begin_src php
+$numero = 300;
+var_dump($numero);
+#+end_src
+
+** Floats
+#+begin_src php
+$float = 300.23;
+var_dump($float);
+#+end_src
+
+** Strings
+#+begin_src php
+$nombre = "Juan";
+var_dump($nombre);
+#+end_src
+** Arreglos
+#+begin_src php
+$array = [];
+var_dump($array);
+#+end_src
+
