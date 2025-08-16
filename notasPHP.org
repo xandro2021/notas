@@ -62,3 +62,9 @@ $array = [];
 var_dump($array);
 #+end_src
 
+* Operadores aritmeticos y Comparacion
+Igual a los de Javascript con excepcion a <=>
+El resultado de var_dump va a ser -1 si el de la izquierda es menor, cero si son iguales, y 1 si izquierda es mayor
+#+begin_src php
+var_dump($numero1 <=> $numero2);
+#+end_src
