@@ -136,3 +136,57 @@ $cliente = [
 echo $cliente["nombre"];
 echo $cliente["informacion"]["tipo"];
 #+end_src
+
+* Funciones predifinidas arreglos
+** Empty
+Si el arreglo tiene informacion
+#+begin_src php
+$clientes = array();
+empty($clientes);
+#+end_src
+** Isset
+Si el arreglo existe o una propiedad esta definida en un arreglo asociativo
+#+begin_src php
+$cliente = [
+    "nombre" => "Marco",
+    "edad" => 30
+];
+
+echo "<pre>";
+var_dump(isset($cliente));
+var_dump(isset($cliente["nombre"]));
+echo "<pre>";
+#+end_src
+
+* Array Methods
+** Contiene elemento
+#+begin_src php
+$carrito = ["Tablet", "Computadora", "Television"];
+in_array("Tablet", $carrito);
+#+end_src
+** Ordenar arreglos
++ sort -> ordena de menor a mayor
++ rsort -> de mayor a menor
+#+begin_src php
+$numeros = array(5,2,56,1,6,22,1,13,54,6,3,2);
+sort($numeros);
+rsort($numeros);
+#+end_src
+** Ordenar arreglos asociativos
++ Las variantes con r se debe a reverse
+*** Values
+#+begin_src php
+$cliente = array (
+    "saldo" => 100,
+    "tipo" => "premium",
+    "nombre" => "Juan"
+);
+
+asort($cliente);
+arsort($cliente);
+#+end_src
+*** Keys
+#+begin_src php
+ksort($cliente);
+krsort($cliente);
+#+end_src
