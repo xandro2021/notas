@@ -190,3 +190,47 @@ arsort($cliente);
 ksort($cliente);
 krsort($cliente);
 #+end_src
+
+* Condicionales
+** Operadores Boleanos
+Funcionan igual que en Javascript || y &&
+** If-else
+Funciona igual que en Javascript
+#+begin_src php
+$cliente = array (
+    "saldo" => 100,
+    "nombre" => "Juan",
+    "informacion" => [
+        "tipo" => "premium"
+    ]
+);
+
+if (!empty($cliente)) {
+    echo "El cliente existe <br>";
+
+    if($cliente["saldo"] > 0) {
+        echo "tiene saldo";
+    }
+    else if($cliente["informacion"]["tipo"] === "premium") {
+        echo "El cliente es Premium";
+    }
+    else {
+        echo "Estas pobre";
+    }
+}
+#+end_src
+** Switch
+#+begin_src php
+$technologia = "Javascript";
+
+switch($technologia) {
+    case "PHP" :
+        echo "PHP, el lenguaje de la web";
+        break;
+    case "Javascript" :
+        echo "Javascript, el lenguaje del front end";
+        break;
+    default:
+        echo "Lenguaje desconocido";
+}
+#+end_src
