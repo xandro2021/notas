@@ -403,3 +403,31 @@ include "includes/footer.php";
 #+begin_src php
 require_once "includes/header.php";
 #+end_src
+
+* JSON en PHP
+** Convertir a JSON
+#+begin_src php
+$productos = [
+    [
+        "nombre" => "Tablet",
+        "precio" => 200,
+        "disponible" => true
+    ],
+    [
+        "nombre" => "Television 24\"",
+        "precio" => 300,
+        "disponible" => true
+    ],
+    [
+        "nombre" => "Monitor Curvo",
+        "precio" => 400,
+        "disponible" => false,
+    ],
+];
+
+$productosjson = json_encode($productos, JSON_UNESCAPED_UNICODE);
+#+end_src
+** Convertir de JSON a Obj
+#+begin_src php
+$productosObj = json_decode($productosjson);
+#+end_src
