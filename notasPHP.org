@@ -72,7 +72,7 @@ var_dump($numero1 <=> $numero2);
 * Incremento y decrementos
 Es igual a los de javascript
 
-* Funciones
+* Funciones Predefinidas de PHP
 #+begin_src php
 $nombreCliente = "Marco";
 strlen($nombreCliente);
@@ -233,4 +233,142 @@ switch($technologia) {
     default:
         echo "Lenguaje desconocido";
 }
+#+end_src
+
+* Loops
+Los loops son iguales a los de javascript (while, do-while, for)
+** for
+#+begin_src php
+$clientes = ["Pedro", "Juan", "Karen"];
+
+for($i = 0; $i < count($clientes); $i++) {
+    echo $clientes[$i] . "<br>";
+}
+#+end_src
+** foreach
+*** Arreglo sencillo
+#+begin_src php
+$clientes = ["Pedro", "Juan", "Karen"];
+
+foreach($clientes as $cliente) {
+    echo $cliente."<br>";
+}
+#+end_src
+*** Arreglo asociativo
+**** values
+#+begin_src php
+$cliente = [
+    "nombre" => "Juan",
+    "saldo" => 200,
+    "tipo" => "premium"
+];
+
+foreach($cliente as $valor) {
+    echo $valor."<br>";
+}
+#+end_src
+**** keys
+#+begin_src php
+$cliente = [
+    "nombre" => "Juan",
+    "saldo" => 200,
+    "tipo" => "premium"
+];
+
+foreach($cliente as $key => $valor) {
+    echo "[key: {$key}, value: {$valor}] <br>";
+}
+#+end_src
+
+* Ejemplo Basico
+#+begin_src php
+$productos = [
+    [
+        "nombre" => "Tablet",
+        "precio" => 200,
+        "disponible" => true
+    ],
+    [
+        "nombre" => "Television 24\"",
+        "precio" => 300,
+        "disponible" => true
+    ],
+    [
+        "nombre" => "Monitor Curvo",
+        "precio" => 400,
+        "disponible" => false
+    ],
+];
+
+foreach ($productos as $producto) { ?>
+
+    <li>
+        <p> Producto: <?php  echo $producto["nombre"] ?> </p>
+        <p> Precio: <?php  echo "$". $producto["precio"] ?> </p>
+        <p><?php  echo ($producto["disponible"]) ? "Diponible": "Sin Stock"; ?> </p>
+    </li>
+
+    <?php
+}
+
+
+include "includes/footer.php";
+#+end_src
+
+* Funciones
+** Sin retorno
++ Se puede especificar el tipo de dato
++ Se pueden asignar valores por default
+#+begin_src php
+function sumar(int $numero1 = 0, int $numero2 = 0) {
+    echo $numero1 + $numero2;
+}
+
+sumar(1,6);
+#+end_src
+** Con retorno
+#+begin_src php
+function usuarioAutenticado() : string {
+    return "El usuario esta autenticado";
+}
+
+echo usuarioAutenticado();
+#+end_src
+** Con retorno opcional
+La funcion puede o no regresar un valor. Perfecto para las situaciones donde haya un retorno de null
+#+begin_src php
+function usuarioAutenticado(bool $autenticado) : ?string {
+    if ($autenticado) {
+        return "El usuario esta autenticado";
+    }
+    else {
+        return null;
+    }
+}
+
+echo usuarioAutenticado(true);
+#+end_src
+** Con diferentes tipos retorno (PHP8)
+La funcion devuelve un string o un entero
+#+begin_src php
+function usuarioAutenticado(bool $autenticado) : string | int {
+    if ($autenticado) {
+        return "El usuario esta autenticado";
+    }
+    else {
+        return 20;
+    }
+}
+
+echo usuarioAutenticado(true);
+#+end_src
+** Parametros nombrado (PHP8)
+Puedo especificar a cual argumento va a corresponder cada parametro
+#+begin_src php
+function sumar(int $num1, int $num2) {
+    echo "segundo parametro: {$num2}<br>";
+    echo "resultado: ".($num1+$num2);
+}
+
+sumar(num2: 1, num1: 3);
 #+end_src
