@@ -372,3 +372,34 @@ function sumar(int $num1, int $num2) {
 
 sumar(num2: 1, num1: 3);
 #+end_src
+
+* Añadir archivos a otros archivos
+** Include
++ La instruccion include sirve para inyectar en el documento actual codigo que se va a repetir en otros documentos
++ En el ejemplo estoy inyectando un header y un footer de html provenientes de otro archivo php para que asi el contenido actual tenga el mismo header-footer y estilos que otros documentos
++ Si el archivo que marca la ruta no existe, puede que el resto del codigo se ejecute dependiendo de la configuracion
++ RECOMENDACION: Usar solo con templates
+#+begin_src php
+<?php
+declare(strict_types=1);
+include "includes/header.php";
+
+function sumar(int $num1, int $num2) {
+    echo "segundo parametro: {$num2}<br>";
+    echo "resultado: ".($num1+$num2);
+}
+
+sumar(num2: 1, num1: 3);
+
+include "includes/footer.php";
+#+end_src
+
+** Require
++ Hace lo mismo que include con la diferencia de que si el archivo especificado en la ruta no existe, entonces el programa crashea con Error 500: Internal Server Error
++ RECOMENDACION: Usar solo cuando hay funciones criticas para la correcta ejecucion de la aplicacion, como por ejemplo: Conexiones a bases de datos. REUTILIZACION DE FUNCIONES
+
+** Require Once
++ Lo mismo que require, pero con la diferencia de que garantiza que el archivo solo se incluya una unica vez
+#+begin_src php
+require_once "includes/header.php";
+#+end_src
