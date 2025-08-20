@@ -1,0 +1,25 @@
+{
+  "name": "bienesraices",
+  "version": "1.0.0",
+  "description": "Curso Desarrollo Web Completo",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "gulp"
+  },
+  "author": "Juan De La Torre",
+  "license": "ISC",
+  "devDependencies": {
+    "cssnano": "^7.1.0",
+    "glob": "^11.0.3",
+    "gulp": "^5.0.1",
+    "gulp-autoprefixer": "^9.0.0",
+    "gulp-postcss": "^10.0.0",
+    "gulp-rename": "^2.1.0",
+    "gulp-sass": "^6.0.1",
+    "gulp-terser": "^2.1.0",
+    "sass": "^1.90.0",
+    "sharp": "^0.34.3",
+    "terser": "^5.43.1"
+  }
+}
