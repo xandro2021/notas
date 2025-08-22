@@ -172,12 +172,30 @@ update servicios set nombre = "duplicado" where id = 2;
 #+begin_src sql
 update servicios set nombre = "Corte de cabello duplicado actualizado", precio = 120 where id = 2;
 #+end_src
-
+** Actualizar todos los datos de una columna
+En una tabla de relacion llamada nota(compra) que une a producto y cliente, se necesita llenar la columna de subtotal que contiene y para ello requiere el dato del precio y la cantidad. SIn embargo la tabla nota solo contiene a la cantidad
+#+begin_src sql
+update nota
+set subtotal = cant*precio
+from nota inner join producto on producto.clave_prod = nota.clave_prod1;
+#+end_src
 * Eliminar datos
 ** Eliminar un registro
 Al eliminar un registro, si el id es autoincremental, ese id del registro eliminado ya no volverá a ser tomado por ningún otro registro que se ingrese
 #+begin_src sql
 delete from servicios where id = 2;
+#+end_src
+** Eliminar todos los registros de una tabla
+*** Ineficiente
+Misma instruccion para eliminar un registro pero sin unar ningun delimitador de manera que se vuela todos los registros
+#+begin_src sql
+delete from nombreTabla;
+#+end_src
+*** Eficiente
+Se vuelta todos los registros sin necesidad de ir uno a uno
+Lo cual es la forma recomendada de hacerlo en bases de datos medianas y grandes que contienen cientos o miles de registros
+#+begin_src sql
+truncate table nombreTabla;
 #+end_src
 
 * Modificar la base de datos
