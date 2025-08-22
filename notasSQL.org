@@ -218,3 +218,10 @@ alter table servicios drop column descripcion;
 #+begin_src sql
 drop table servicios;
 #+end_src
+
+* Eliminar DB
+obtiene permisos administrador con use master, y finalmente elimina la DB con la instruccion drop database
+#+begin_src sql
+use master;
+drop database nombreDB;
+#+end_src
