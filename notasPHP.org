@@ -446,6 +446,7 @@ if(!$db) {
 #+end_src
 *** Extraer datos de la DB
 Cerrar la conexion en PHP es opcional dado que el mismo lenguaje lo hace automaticamente una vez llega al final del bloque de codigo de la consulta
+funciones.php
 #+begin_src php
 function obtener_servicios() {
     try {
@@ -457,6 +458,7 @@ function obtener_servicios() {
         $consulta = mysqli_query($db, $sql);
         // Acceder a los resultados
         $resultados = mysqli_fetch_assoc($consulta); // Solo trae el primer dato
+        $resultados = mysqli_fetch_all($consulta); // trae todos los datos de la consulta, pero se recomienda mejor assoc y meterlo dentro de un ciclo
         // Cerrar conexion
         mysqli_close($db);
 
@@ -473,6 +475,7 @@ index.php
 #+begin_src php
 <? php
     require __DIR__ . "/includes/funciones.php";
+    require "./includes/funciones.php";
     $consulta = obtener_servicios();
 ?>
 
