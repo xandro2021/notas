@@ -490,3 +490,12 @@ index.php
 
 <?php } ?>
 #+end_src
+
+* Aumentar algunos defaults de php para manejo de archivos
+Llamar a la funcion phpinfo() para ver donde se encuentrar php.init
+#+begin_src txt
+upload_max_filesize = 40M
+post_max_size = 40M
+max_execution_time = 300
+memory_limit = 128M
+#+end_src
