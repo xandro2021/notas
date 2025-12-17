@@ -499,3 +499,42 @@ post_max_size = 40M
 max_execution_time = 300
 memory_limit = 128M
 #+end_src
+
+* Sanitizar entradas de datos
+Ejemplo Seccion 30: Bienes raices, video 316
+** GET
+#+begin_src php
+$id = $_GET['id'];
+$id = filter_var($id, FILTER_VALIDATE_INT);
+
+// validando la entrada
+if (!$id) {
+    header('Location: /admin');
+}
+#+end_src
+** POST
+#+begin_src php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Entre comillas van los name de las etiquetas html
+    // sanatizar lo que ingresa el usuario para evitar codigo malicioso
+    $titulo = mysqli_real_escape_string($db, $_POST['titulo']);
+    $precio = mysqli_real_escape_string($db, $_POST['precio']);
+    $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
+    $habitaciones = mysqli_real_escape_string($db, $_POST['habitaciones']);
+    $wc = mysqli_real_escape_string($db, $_POST['wc']);
+    $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento']);
+    $vendedorId = mysqli_real_escape_string($db, $_POST['vendedor']);
+    $creado = date('Y/m/d');
+
+    // Asignar imagen hacia una variable
+    $imagen = $_FILES['imagen'];
+
+    if (!$titulo) {
+        $errores[] = "Debes añadir un título";
+    }
+
+    if (!$precio) {
+        $errores[] = "El precio es obligatorio";
+    }
+}
+#+end_src
