@@ -433,7 +433,7 @@ $productosObj = json_decode($productosjson);
 #+end_src
 
 * Conexion DB
-** MySQL
+** MySQLI Funciones
 *** Conectarse a la DB
 database.php
 #+begin_src php
@@ -490,6 +490,72 @@ index.php
 
 <?php } ?>
 #+end_src
+** MySQLI POO
+*** Consulta simple
+#+begin_src php
+$db = new mysqli('localhost', 'root', 'root', 'bienesraices_crud');
+$query = "SELECT titulo FROM Propiedades";
+$resultado = $db->query($query);
+
+while($row = $resultado->fetch_assoc()) {
+    var_dump($row);
+}
+
+#+end_src
+*** Sentencia preparada
+Mas pasos pero mayor performance y seguridad dado que son consultas que el servidor reutiliza
+#+begin_src php
+$db = new mysqli('localhost', 'root', 'root', 'bienesraices_crud');
+$query = "SELECT titulo, imagen FROM Propiedades";
+$stmt = $db->prepare($query);
+
+// ejecutar query
+$stmt->execute();
+// crear la variable titulo que es columna de la consulta
+$stmt->bind_result($titulo, $imagen);
+// asigna el resultado
+while($stmt->fetch()) {
+    // imprime resultado
+    var_dump($titulo);
+    var_dump($imagen);
+}
+
+#+end_src
+** PDO
+*** Sin sentencias preparadas
+#+begin_src php
+$db = new PDO('mysql:host=127.0.0.1; dbname=bienesraices_crud', 'root', 'root');
+
+$query = "SELECT titulo FROM Propiedades;";
+
+$propiedades = $db->query($query)->fetch();
+#+end_src
+
+*** Con sentencias preparadas
+#+begin_src php
+// conectar
+$db = new PDO('mysql:host=127.0.0.1; dbname=bienesraices_crud', 'root', 'root');
+
+// query
+$query = "SELECT titulo, imagen FROM Propiedades;";
+
+// preapar la query
+$stmt = $db->prepare($query);
+
+// ejecutar la query
+$stmt->execute();
+
+// obtener los resultados
+$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// iterar sobre los resultados
+foreach($resultado as $propiedad) {
+    echo $propiedad['titulo'];
+    echo "<br>";
+    echo $propiedad['imagen'];
+    echo "<br>";
+}
+#+end_src
 
 * Aumentar algunos defaults de php para manejo de archivos
 Llamar a la funcion phpinfo() para ver donde se encuentrar php.init
@@ -537,4 +603,306 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errores[] = "El precio es obligatorio";
     }
 }
+#+end_src
+
+* Crear Usuario en PHP
+#+begin_src php
+<?php
+
+// Importar la conexion
+require "includes/config/database.php";
+$db = conectarDB();
+
+// Crear un email y password
+$email = "correo@correo.com";
+$password = 123456;
+
+$passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+
+// Query para crear el usuario
+$query = "INSERT INTO Usuario (email, password_hash) VALUES ('$email', '$passwordHash');";
+
+// Agregarlo a la base de datos
+mysqli_query($db, $query);
+#+end_src
+
+* POO
+** Ejemplo 01
+#+begin_src php
+<?php
+class Producto {
+    protected string $nombre;
+    public float $precio;
+    public bool $disponible;
+    private static float $pi = 3.14;
+
+    public function __construct(string $nombre, float $precio, bool $disponible) {
+        $this->nombre = $nombre;
+        $this->precio = $precio;
+        $this->disponible = $disponible;
+    }
+
+    public static function getPi() : float {
+        return self::$pi;
+    }
+
+    public static function obtenerProducto() {
+        echo "Obteniendo datos del producto";
+    }
+
+    public function mostrarProducto() : void {
+        echo "El producto es {$this->nombre} y su precio es de {$this->precio}";
+    }
+
+    public function getNombre() : string {
+        return $this->nombre;
+    }
+
+    public function setNombre(string $nombre) : void {
+        $this->nombre = $nombre;
+    }
+
+}
+
+$producto = new Producto("Tablet", 200, true);
+$producto->mostrarProducto();
+
+$producto->setNombre("Computadora");
+echo $producto->getNombre();
+
+// llamado metodo estatico
+Producto::obtenerProducto();
+echo Producto::getPi();
+
+?>
+#+end_src
+** Herencia y clases abstractas
+#+begin_src php
+<?php declare(strict_types=1);
+
+abstract class Transporte {
+    public function __construct(protected int $ruedas, protected int $capacidad) {  }
+
+    public function getInfo() : string {
+        return "El transporte tiene {$this->ruedas} ruedas y una capacidad de {$this->capacidad} personas";
+    }
+
+    public function getRuedas() : int {
+        return $this->ruedas;
+    }
+}
+
+class Bicicleta extends Transporte {
+
+    // overwrite
+    public function getInfo() : string {
+        return "El transporte tiene {$this->ruedas} ruedas y una capacidad de {$this->capacidad} personas y NO GASTA GASOLINA";
+    }
+}
+
+class Automovil extends Transporte {
+    public function __construct(protected int $ruedas, protected int $capacidad, protected string $transmicion) {  }
+
+    public function getTransmicion() : string {
+        return $this->transmicion;
+    }
+}
+
+$bici = new Bicicleta(2, 1);
+echo $bici->getInfo();
+
+$auto = new Automovil(4, 4);
+echo $auto->getInfo();
+
+#+end_src
+** Interfaces
+#+begin_src php
+<?php declare(strict_types=1);
+
+interface TransporteInterfaz {
+    public function getInfo() : string;
+    public function getRuedas() : int;
+}
+
+class Transporte implements TransporteInterfaz {
+    public function __construct(protected int $ruedas, protected int $capacidad) {  }
+
+    public function getInfo() : string {
+        return "El transporte tiene {$this->ruedas} ruedas y una capacidad de {$this->capacidad} personas";
+    }
+
+    public function getRuedas() : int {
+        return $this->ruedas;
+    }
+}
+
+class Automovil extends Transporte implements TransporteInterfaz {
+    public function __construct(protected int $ruedas, protected int $capacidad, protected string $color) {  }
+
+    public function getInfo() : string {
+        return "El transporte AUTO tiene {$this->ruedas} ruedas y una capacidad de {$this->capacidad} personas y tiene el color {$this->color}";
+    }
+
+    public function getColor() : string {
+        return "El color es {$this->color}";
+    }
+}
+
+#+end_src
+** Importar clases en otros archivo
+La funcion spl_autoload_register automaticamente registra los archivos de las clases que se estan utilizando, en este caso Detalles y Clientes
+#+begin_src php
+function mi_autoload($clase) {
+    require __DIR__ . '/clases/{$clase}.php';
+}
+
+spl_autoload_register('mi_autoload');
+
+$detalles = new Detalles();
+$clientes = new Clientes();
+#+end_src
+** Namespace
+Para evitar tener conflicto de nombres en clases
+*** Clase a importar
+#+begin_src php
+namespace App;
+
+class Clientes {
+    public function __construct() {
+        echo "desde la clase clientes.php";
+    }
+}
+#+end_src
+*** Archivo principal
+**** Opcion 1
+#+begin_src php
+function mi_autoload($clase) {
+    $partes = explode('\\', $clase);
+    require __DIR__ . '/clases/{$partes[1]}.php';
+}
+
+spl_autoload_register('mi_autoload');
+
+class Clientes {
+    public function __construct() {
+        echo "desde 08.php que contiene los clientes";
+    }
+}
+
+// llamo a clientes del paquete o namespace App en vez del declarado aqui mismo
+$clientes = new App\Clientes();
+// llamo a la clase local
+$clientes2 = new Clientes();
+#+end_src
+**** Opcion 2
+Uso directamente el paquete que contiene la clase que voy a usar
+#+begin_src php
+use App\Clientes;
+use App\Detalles;
+
+function mi_autoload($clase) {
+    $partes = explode('\\', $clase);
+    require __DIR__ . '/clases/{$partes[1]}.php';
+}
+
+spl_autoload_register('mi_autoload');
+
+$clientes = new Clientes();
+#+end_src
+** Composer
+*** Iniciar
+Responder las preguntas, y darle no a todo excepto al ultimo de confirmacion
+#+begin_src bash
+composer init
+#+end_src
+*** Archivo generado despues de la iniciar
+Agrego el autoload para cargar las clases de los namespaces o paquetes que yo importo, en este caso seria App del ejemplo de la seccion anterior
+#+begin_src json
+{
+    "name": "xandro2021/php",
+    "description": "Composer de prueba para apuntes sobre php",
+    "autoload": {
+        "psr-4": {
+            "Xandro2021\\Php\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "xandro2021",
+            "email": "xandrocastro2021@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "./clases"
+        }
+    }
+}
+#+end_src
+*** Actualizar la configuracion
+Despues de modificar el composer.json se actualiza la configuracion con el comando update
+#+begin_src bash
+composer update
+#+end_src
+*** El codigo del ultimo ejemplo da namespaces cambiaria a:
+link del ejemplo: [[Opcion 2][LINK]]
+#+begin_src php
+require 'vendor/autoload.php';
+use App\Clientes;
+use App\Detalles;
+
+$clientes = new Clientes();
+#+end_src
+*** Instalar un paquete de composer
+#+begin_src bash
+composer require firebase/php-jwt
+#+end_src
+*** Usar el paquete instalado
+#+begin_src php
+<?php declare(strict_types=1);
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+$key = 'example_key';
+$payload = [
+    'iss' => 'http://example.org',
+    'aud' => 'http://example.com',
+    'iat' => 1356999524,
+    'nbf' => 1357000000
+];
+
+/**
+ ,* IMPORTANT:
+ ,* You must specify supported algorithms for your application. See
+ ,* https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
+ ,* for a list of spec-compliant algorithms.
+ ,*/
+$jwt = JWT::encode($payload, $key, 'HS256');
+$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+print_r($decoded);
+
+// Pass a stdClass in as the third parameter to get the decoded header values
+$headers = new stdClass();
+$decoded = JWT::decode($jwt, new Key($key, 'HS256'), $headers);
+print_r($headers);
+
+/*
+ NOTE: This will now be an object instead of an associative array. To get
+ an associative array, you will need to cast it as such:
+,*/
+
+$decoded_array = (array) $decoded;
+
+/**
+ ,* You can add a leeway to account for when there is a clock skew times between
+ ,* the signing and verifying servers. It is recommended that this leeway should
+ ,* not be bigger than a few minutes.
+ ,*
+ ,* Source: http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#nbfDef
+ ,*/
+JWT::$leeway = 60; // $leeway in seconds
+$decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 #+end_src

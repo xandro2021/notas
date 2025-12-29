@@ -1,0 +1,6 @@
+#+title: Recursos
+
+* Iconos
+
+** Iconos animados
+https://lucide-animated.com/

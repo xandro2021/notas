@@ -1,0 +1,16 @@
+{
+    "name": "xandro2021/php",
+    "description": "Composer de prueba para apuntes sobre php",
+    "autoload": {
+        "psr-4": {
+            "Xandro2021\\Php\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "xandro2021",
+            "email": "xandrocastro2021@gmail.com"
+        }
+    ],
+    "require": {}
+}
