@@ -4,3 +4,7 @@
 
 ** Iconos animados
 https://lucide-animated.com/
+
+* Alertas
+** SweetAlert2
+https://sweetalert2.github.io/

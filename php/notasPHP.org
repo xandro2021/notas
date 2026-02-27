@@ -906,3 +906,9 @@ $decoded_array = (array) $decoded;
 JWT::$leeway = 60; // $leeway in seconds
 $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 #+end_src
+
+* Libreria para subir imagenes
+** Intervention
+#+begin_src bash
+composer require intervention/image
+#+end_src
