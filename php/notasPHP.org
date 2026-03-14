@@ -912,3 +912,42 @@ $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 #+begin_src bash
 composer require intervention/image
 #+end_src
+
+* .env
+** Instalar dependencia composer
+#+begin_src bash
+composer require vlucas/phpdotenv
+#+end_src
+** Crear archivo .env
+#+begin_src
+DB_HOST = 127.0.0.1
+DB_USER = root
+DB_PASS = root
+DB_NAME = appsalon
+#+end_src
+** Configura app.php
+#+begin_src php
+<?php
+
+use Model\ActiveRecord;
+require __DIR__ . '/../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+require 'funciones.php';
+require 'database.php';
+
+// Conectarnos a la base de datos
+
+$db = conectarDB();
+ActiveRecord::setDB($db);
+#+end_src
+** Utiliza las variables de entorno
+#+begin_src php
+$db = new mysqli(
+    $_ENV['DB_HOST'],
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASS'],
+    $_ENV['DB_NAME']
+);
+#+end_src

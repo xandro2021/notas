@@ -1,0 +1,443 @@
+#+title: Notas
+
+* Instrucciones
+** Nota Importante
+Tener instalado purgecss para que el scss con bootstrap compilado no pese tanto, al quitar todo lo que no se usa de bootstrap
+#+begin_src bash
+npm i -g purgecss
+npm i -g gulp-cli
+#+end_src
+** Iniciar
+#+begin_src bash
+pnpm init
+pnpm i -D bootstrap sass
+mkdir -p src/scss
+touch src/scss/style.scss
+#+end_src
+** Ejemplo de contenido de archivo SCSS
+#+begin_src scss
+$color: red;
+
+body {
+    background-color: $color;
+}
+#+end_src
+** Crear script ejecutable de pnpm (package.json)
+El build utiliza purgecss para eliminar todo el bootstrap que no ha sido utilizado en los archivos html
+#+begin_src json
+  "scripts": {
+    "compilar:sass": "sass --watch src/scss:build/css",
+    "build:sass": "purgecss -css build/css/style.css -con *.html -o build/css/meeti.css"
+  },
+#+end_src
+** Ejecuta el script
+#+begin_src bash
+npm run compilar:sass
+#+end_src
+** Importar Bootstrap
+#NAME: _custom.scss
+#+begin_src scss
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+#+end_src
+
+#NAME: style.scss (Archivo principal de scss)
+#+begin_src scss
+@use 'custom';
+$color: blue;
+
+body {
+    background-color: $color;
+}
+#+end_src
+** Reescribir Bootstrap
+Creo variable y luego asigno a las variables de bootstrap las nuevas variables recien creadas.
+La sobreescritura debe ir antes del import de bootstrap
+#NAME: _custom.scss
+#+begin_src scss
+$rojo: #F34F51;
+$verde: #0098AE;
+$oscuro: #212121;
+
+// Reescribir Bootstrap
+$primary: $rojo;
+$secondary: $verde;
+$dark: $oscuro;
+
+// Importar Bootstrap
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+#+end_src
+** Ejemplo de flujo de trabajo
+*** Haciendo el header
+**** Crear las carpetas
+#+begin_src bash
+mkdir -p src/scss/header
+touch src/scss/header/_index.scss
+touch src/scss/header/_header.scss
+#+end_src
+**** Contenido de archivos
+***** archivo principal de scss (style.scss/app.scss)
+Se elimina lo de custom
+#+begin_src scss
+@use 'header';
+#+end_src
+***** header/
+****** _index.scss
+#+begin_src scss
+@forward 'header';
+#+end_src
+****** _header.scss + mixin
+importo custom en esta al ser la primera, y le asigno la variable * para poder usar directamente las variables de bootstrap en vez de
+custom.$primary
+El use custom ayuda a que ese archivo y bootstrap solo se compilen una unica vez
+#+begin_src scss
+@use '../custom' as *;
+
+.header {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+
+    @include media-breakpoint-up(md) {
+        padding-top: 10rem;
+        padding-bottom: 10rem;
+    }
+
+    .logo {
+        width: 10rem;
+    }
+}
+#+end_src
+
+* VITE
+** Estructura archivos
+#+begin_src bash
+❯ tree -I 'node_modules'
+.
+├── package.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── public
+│   └── build
+│       ├── css
+│       │   └── main.min.css
+│       ├── img
+│       │   ├── app-1200.avif
+│       │   ├── app-1200.webp
+│       │   ├── app-400.avif
+│       │   ├── app-400.webp
+│       │   ├── app-800.avif
+│       │   ├── app-800.webp
+│       │   ├── comilla.svg
+│       │   ├── grafica.svg
+│       │   ├── header-1200.avif
+│       │   ├── header-1200.webp
+│       │   ├── header-400.avif
+│       │   ├── header-400.webp
+│       │   ├── header-800.avif
+│       │   ├── header-800.webp
+│       │   ├── icono_inicio.svg
+│       │   ├── icono_negocio.svg
+│       │   ├── icono_pro.svg
+│       │   ├── imagen_podcast.svg
+│       │   ├── logo.svg
+│       │   ├── podcast_cover-1200.avif
+│       │   ├── podcast_cover-1200.webp
+│       │   ├── podcast_cover-400.avif
+│       │   ├── podcast_cover-400.webp
+│       │   ├── podcast_cover-800.avif
+│       │   └── podcast_cover-800.webp
+│       └── js
+│           └── main.min.js
+├── src
+│   ├── img
+│   │   ├── app.jpg
+│   │   ├── comilla.svg
+│   │   ├── grafica.svg
+│   │   ├── header.jpg
+│   │   ├── icono_inicio.svg
+│   │   ├── icono_negocio.svg
+│   │   ├── icono_pro.svg
+│   │   ├── imagen_podcast.svg
+│   │   ├── logo.svg
+│   │   └── podcast_cover.png
+│   ├── index.html
+│   ├── js
+│   │   └── main.js
+│   └── scss
+│       └── app.scss
+├── vite.config.js
+├── vite-imagenes.js
+└── vite-imagenes-unicaResolucion.js
+
+10 directories, 46 files
+
+#+end_src
+** Paquetes
+*** package.json
+#+begin_src json
+{
+  "name": "04-PodcastApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.32.0",
+  "devDependencies": {
+    "glob": "^13.0.6",
+    "sass": "^1.98.0",
+    "sharp": "^0.34.5",
+    "vite": "^8.0.0",
+    "vite-plugin-image-optimizer": "^2.0.3",
+    "vite-plugin-imagemin": "^0.6.1"
+  }
+}
+#+end_src
+*** vite.config.js
+#+begin_src js
+import { defineConfig } from "vite";
+import path from "path";
+import viteImagemin from "vite-plugin-imagemin";
+import imagenesPlugin from "./vite-imagenes.js";
+
+export default defineConfig({
+
+  root: "src",
+
+  build: {
+    outDir: "../public/build",
+    emptyOutDir: true,
+
+    sourcemap: true,
+
+    rollupOptions: {
+
+      input: {
+        main: path.resolve(__dirname, "src/js/main.js"),
+        // admin: path.resolve(__dirname, "src/js/admin.js"),
+        // login: path.resolve(__dirname, "src/js/login.js")
+      },
+
+      output: {
+        entryFileNames: "js/[name].min.js",
+        chunkFileNames: "js/[name].min.js",
+
+        assetFileNames: (assetInfo) => {
+          const name = assetInfo.name ?? "";
+
+          if (name.endsWith(".css")) {
+            return "css/[name].min.css";
+          }
+
+          return "assets/[name].[ext]";
+        }
+      }
+
+    }
+  },
+
+  css: {
+    devSourcemap: true
+  },
+
+  plugins: [
+    imagenesPlugin(),
+    // viteImagemin({
+
+    //   mozjpeg: {
+    //     quality: 80
+    //   },
+
+    //   webp: {
+    //     quality: 80
+    //   },
+
+    //   avif: {
+    //     quality: 80
+    //   },
+
+    //   pngquant: {
+    //     quality: [0.8, 0.8]
+    //   }
+
+    // })
+
+  ]
+
+});
+#+end_src
+*** Procesado de imagenes simultaneo
+**** resolucion unica
+#+begin_src js
+import fs from "fs";
+import path from "path";
+import { globSync } from "glob";
+import sharp from "sharp";
+
+export default function imagenesPlugin() {
+
+  return {
+
+    name: "vite-imagenes",
+
+    async closeBundle() {
+
+      const srcDir = "src/img";
+      const buildDir = "public/build/img";
+
+      const images = globSync(`${srcDir}/**/*`);
+
+      const tasks = images.map(async (file) => {
+
+        const relativePath = path.relative(srcDir, path.dirname(file));
+        const outputDir = path.join(buildDir, relativePath);
+
+        if (!fs.existsSync(outputDir)) {
+          fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        const baseName = path.basename(file, path.extname(file));
+        const extName = path.extname(file).toLowerCase();
+
+        if (extName === ".svg") {
+
+          const outputFile = path.join(outputDir, `${baseName}${extName}`);
+
+          if (!fs.existsSync(outputFile)) {
+            fs.copyFileSync(file, outputFile);
+          }
+
+          return;
+        }
+
+        const outputFile = path.join(outputDir, `${baseName}${extName}`);
+        const outputWebp = path.join(outputDir, `${baseName}.webp`);
+        const outputAvif = path.join(outputDir, `${baseName}.avif`);
+
+        const options = { quality: 80 };
+
+        const promises = [];
+
+        if (!fs.existsSync(outputFile)) {
+          promises.push(sharp(file).jpeg(options).toFile(outputFile));
+        }
+
+        if (!fs.existsSync(outputWebp)) {
+          promises.push(sharp(file).webp(options).toFile(outputWebp));
+        }
+
+        if (!fs.existsSync(outputAvif)) {
+          promises.push(sharp(file).avif(options).toFile(outputAvif));
+        }
+
+        await Promise.all(promises);
+
+        console.log("Imagen procesada:", file);
+
+      });
+
+      await Promise.all(tasks);
+
+      console.log("✓ Todas las imágenes procesadas");
+
+    }
+
+  };
+
+}
+#+end_src
+**** resolucion multiple
+#+begin_src js
+import fs from "fs";
+import path from "path";
+import { globSync } from "glob";
+import sharp from "sharp";
+
+export default function imagenesPlugin() {
+
+  return {
+
+    name: "vite-imagenes",
+
+    async closeBundle() {
+
+      const srcDir = "src/img";
+      const buildDir = "public/build/img";
+
+      const images = globSync(`${srcDir}/**/*`);
+
+      const sizes = [400, 800, 1200];
+
+      const tasks = images.map(async (file) => {
+
+        const relativePath = path.relative(srcDir, path.dirname(file));
+        const outputDir = path.join(buildDir, relativePath);
+
+        if (!fs.existsSync(outputDir)) {
+          fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        const baseName = path.basename(file, path.extname(file));
+        const extName = path.extname(file).toLowerCase();
+
+        if (extName === ".svg") {
+
+          const outputFile = path.join(outputDir, `${baseName}${extName}`);
+
+          if (!fs.existsSync(outputFile)) {
+            fs.copyFileSync(file, outputFile);
+          }
+
+          return;
+        }
+
+        const options = { quality: 80 };
+
+        const promises = [];
+
+        for (const size of sizes) {
+
+          const webp = path.join(outputDir, `${baseName}-${size}.webp`);
+          const avif = path.join(outputDir, `${baseName}-${size}.avif`);
+
+          if (!fs.existsSync(webp)) {
+            promises.push(
+              sharp(file)
+                .resize(size)
+                .webp(options)
+                .toFile(webp)
+            );
+          }
+
+          if (!fs.existsSync(avif)) {
+            promises.push(
+              sharp(file)
+                .resize(size)
+                .avif(options)
+                .toFile(avif)
+            );
+          }
+
+        }
+
+        await Promise.all(promises);
+
+        console.log("Responsive generada:", file);
+
+      });
+
+      await Promise.all(tasks);
+
+      console.log("✓ Todas las imágenes responsive generadas");
+
+    }
+
+  };
+
+}
+#+end_src
